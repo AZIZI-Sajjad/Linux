@@ -11,7 +11,8 @@ ip=$(echo "$ip_line" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p')
 echo "Adresse IP : $ip"
 
 
-echo -e "Subject: YOUR IP at $(date +"%Y-%m-%d-%Hh%M:%Ss")\nFrom: NOREPLY <noreply@reseauxnet.fr>\n\nYOUR IP at  $(date +"%Y-%m-%d-%Hh%M:%Ss") is :\n $ip" | msmtp sajjaad.azizi.021@gmail.com
-echo -e "Subject: YOUR IP at $(date +"%Y-%m-%d-%Hh%M:%Ss")\nFrom: NOREPLY <noreply@reseauxnet.fr>\n\nYOUR IP at  $(date +"%Y-%m-%d-%Hh%M:%Ss") is :\n $ip" | msmtp sajjaad.azizi@yahoo.com
+echo -e "Subject: YOUR IP at $(date +"%Y-%m-%d-%Hh%M:%Ss")\nFrom: NOREPLY Your Name <your@email.com>\n\nYOUR IP at  $(date +"%Y-%m-%d-%Hh%M:%Ss") is :\n $ip" | msmtp recipient1@example.com
+echo -e "Subject: YOUR IP at $(date +"%Y-%m-%d-%Hh%M:%Ss")\nFrom: Your Name <your@email.com>\n\nYOUR IP at  $(date +"%Y-%m-%d-%Hh%M:%Ss") is :\n $ip" | msmtp recipient2@example.com
+
 
 
