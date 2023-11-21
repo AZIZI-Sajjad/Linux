@@ -1,0 +1,7 @@
+ip=$(echo "$response" | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); echo "IP : $ip"  
+ip=$(curl -k monip.org | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); echo $ip  
+ip=$(curl -k monip.org 2>&1 | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); echo $ip  
+ip=$(curl -k monip.org 2>&1 | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); nslookup $ip  
+ip=$(curl -k monip.org 2>&1 | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); echo $ip && nslookup $ip | awk '/^Name:/{getline; print $2}'  
+ip=$(curl -k monip.org 2>&1 | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); echo $ip && nslookup $ip | awk -F': ' '/^Name:/ {print $2}'  
+ip=$(curl -k monip.org 2>&1 | grep "IP :" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p'); echo $ip && nslookup $ip | awk '/^Address:/{getline; print $0}'  
