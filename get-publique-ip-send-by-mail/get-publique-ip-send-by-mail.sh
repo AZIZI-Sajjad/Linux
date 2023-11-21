@@ -22,6 +22,8 @@ response=$(curl -k monip.org)
 
 # Utiliser grep pour rechercher la ligne contenant "IP :" et extraire l'adresse IP
 ip_line=$(echo "$response" | grep "IP :")
+ip=$(echo "$ip_line" | sed -n 's/.*IP : \([0-9.]*\).*/\1/p')
+echo "IP : $ip"
 
 # Define Function to sending mail: 
 function sendmail(){
