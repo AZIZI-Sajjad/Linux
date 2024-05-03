@@ -11,7 +11,7 @@ USER="adminagora"
 # Mot de Passe :
 MDP="PASSWORD"
 
-SCRIPTFILE="/local/path/to/this/script"
+SCRIPTFILE="/local/path/to/this/script.sh"
 
 LOGFILE="/local/path/to/log/file.log"
 
