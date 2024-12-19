@@ -30,9 +30,9 @@ function create_log_dir(){
     then
         echo "[Debug-Information] Dossier de log '$log_Dir' n'exite pas"
         mkdir -p $log_Dir
-        log_debug_information "Dossier de log '$log_Dir' a été créé" >> $log_File
+        log_debug_information "Dossier de log '$log_Dir' a été créé" | tee $log_File
     else
-        log_debug_information "Dossier de log '$log_Dir' existe" >> $log_File
+        log_debug_information "Dossier de log '$log_Dir' existe" | tee $log_File
 
     fi
 
