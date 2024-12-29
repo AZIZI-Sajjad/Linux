@@ -25,12 +25,12 @@ echo "#######################"
 
 
 function log_debug_information() {
-    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Information] [Current-User: $USER] : $1" | tee -a -a $log_File
+    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Information] [Current-User: $USER] : $1" | tee -a $log_File
 }
 
 
 function log_debug_error() {
-    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Error] [Current-User: $USER] : $1" | tee -a -a $log_File
+    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Error] [Current-User: $USER] : $1" | tee -a $log_File
 }
 
 
