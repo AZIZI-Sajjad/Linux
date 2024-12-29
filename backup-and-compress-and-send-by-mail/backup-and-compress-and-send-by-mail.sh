@@ -15,6 +15,7 @@ echo "secret : $secret"
 echo "USER : $USER"
 echo "recipients : $recipients"
 echo "mailsubject : $mailsubject"
+echo "mailbody : $mailbody"
 echo "source_Dir : $source_Dir"
 echo "output_File : $output_File"
 echo "backup_Dir : $backup_Dir"
@@ -22,17 +23,27 @@ echo "output_File : $output_File"
 echo "RETENTION : $RETENTION jours"
 echo "#######################"
 
+
 function log_debug_information() {
-    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Information] [Current-User: $USER] : $1" | tee -a $log_File
+    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Information] [Current-User: $USER] : $1" | tee -a -a $log_File
 }
 
 
 function log_debug_error() {
-    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Error] [Current-User: $USER] : $1" | tee -a $log_File
+    echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - [Debug-Error] [Current-User: $USER] : $1" | tee -a -a $log_File
 }
 
 
 function check_user_or_cron(){
+    # Détails de #%.0s :
+    # # : Le caractère à afficher (ici, le dièse #). Vous pouvez remplacer ce caractère par un autre pour répéter un caractère différent.
+    # %.0s : Une spécification de format dans laquelle :
+    # % : Déclare un format à interpréter par printf.
+    # . : Introduit une précision, spécifiant combien de caractères de la chaîne d'entrée doivent être affichés.
+    # 0 : Spécifie que zéro caractère de l'argument fourni doit être affiché.
+    # s : Indique que le format s'applique à une chaîne de caractères (string).
+    echo $(printf '#%.0s' {1..60}) | tee -a -a $log_File
+    
     # Vérifier si le script est exécuté par cron
     # L'option -n dans une condition if teste si la chaîne spécifiée est non vide. Autrement dit, cela vérifie si la variable $CRON_TZ contient une valeur.
     if [ -z "$PS1" ] && [ -z "$SSH_CONNECTION" ] && [ -z "$TMUX" ] && [ -z "$USER" ]; then
@@ -49,9 +60,9 @@ function create_log_dir(){
     then
         echo "[Debug-Information] Dossier de log '$log_Dir' n'exite pas"
         mkdir -p $log_Dir
-        log_debug_information "Dossier de log '$log_Dir' a été créé" | tee $log_File
+        log_debug_information "Dossier de log '$log_Dir' a été créé" | tee -a $log_File
     else
-        log_debug_information "Dossier de log '$log_Dir' existe" | tee $log_File
+        log_debug_information "Dossier de log '$log_Dir' existe" | tee -a $log_File
 
     fi
 }
@@ -60,7 +71,7 @@ function create_log_dir(){
 function sendmail(){
     # Vérification du nombre d'arguments
     if [[ $# -ne 6 ]]; then
-       log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'archive' " | tee $log_File
+       log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'archive' " | tee -a $log_File
         return 1
     fi
 
@@ -70,20 +81,20 @@ function sendmail(){
     senderMail="$4"
     attachement="$5"
     log_File="$6"
-    log_debug_information ": Lancement de la fonction Afficher les variables dans la fonction 'sendmail'." | tee $log_File
-    log_debug_information ": recipients dans la fonction archive : $recipients" | tee $log_File
-    log_debug_information ": mailbody dans la fonction archive : $mailbody" | tee $log_File
-    log_debug_information ": mailsubject dans la fonction archive : $mailsubject" | tee $log_File
-    log_debug_information ": senderMail dans la fonction archive : $senderMail" | tee $log_File
-    log_debug_information ": attachement dans la fonction archive : $attachement" | tee $log_File
+    log_debug_information ": Lancement de la fonction Afficher les variables dans la fonction 'sendmail'." | tee -a $log_File
+    log_debug_information ": recipients dans la fonction archive : $recipients" | tee -a $log_File
+    log_debug_information ": mailbody dans la fonction archive : $mailbody" | tee -a $log_File
+    log_debug_information ": mailsubject dans la fonction archive : $mailsubject" | tee -a $log_File
+    log_debug_information ": senderMail dans la fonction archive : $senderMail" | tee -a $log_File
+    log_debug_information ": attachement dans la fonction archive : $attachement" | tee -a $log_File
 
     if [  -d "$source_Dir" ]; then
-        log_debug_information "Le dossier cible $source_Dir existe." | tee $log_File
+        log_debug_information "Le dossier cible $source_Dir existe." | tee -a $log_File
 
     fi
 
     if [ ! -d "$source_Dir" ]; then
-        log_debug_error "Le dossier cible $source_Dir n'existe pas." | tee $log_File
+        log_debug_error "Le dossier cible $source_Dir n'existe pas." | tee -a $log_File
 
         exit 1
     fi
@@ -91,7 +102,7 @@ function sendmail(){
 
     for recipient in $recipients; do
         echo -e $mailbody | mail -s "$mailsubject" -aFrom:$senderMail $recipient -A $attachement
-        echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - Mail sent to $recipient" | tee $log_File
+        echo "$(date +"%Y-%m-%d-%Hh%M-%Ss") - Mail sent to $recipient" | tee -a $log_File
 
     done
     return 
@@ -101,7 +112,7 @@ function sendmail(){
 function archive(){
     # Vérification du nombre d'arguments
     if [[ $# -ne 4 ]]; then
-        log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'archive' " | tee $log_File
+        log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'archive' " | tee -a $log_File
 
         return 1
     fi
@@ -110,30 +121,30 @@ function archive(){
     source_Dir="$2"
     output_File="$3"
     log_File="$4"
-    log_debug_information "Lancement de la fonction Afficher les variables dans la fonction 'archive'." | tee $log_File
-    # log_debug_information "secret dans la fonction archive : $secret" | tee $log_File
-    log_debug_information "source_Dir dans la fonction archive : $source_Dir" | tee $log_File
-    log_debug_information "output_File dans la fonction archive : $output_File" | tee $log_File
+    log_debug_information "Lancement de la fonction Afficher les variables dans la fonction 'archive'." | tee -a $log_File
+    # log_debug_information "secret dans la fonction archive : $secret" | tee -a $log_File
+    log_debug_information "source_Dir dans la fonction archive : $source_Dir" | tee -a $log_File
+    log_debug_information "output_File dans la fonction archive : $output_File" | tee -a $log_File
 
     if [  -d "$source_Dir" ]; then
-        log_debug_information "Le dossier cible $source_Dir existe." | tee $log_File
+        log_debug_information "Le dossier cible $source_Dir existe." | tee -a $log_File
 
     fi
 
     if [ ! -d "$source_Dir" ]; then
-        log_debug_error "Le dossier cible $source_Dir n'existe pas." | tee $log_File
+        log_debug_error "Le dossier cible $source_Dir n'existe pas." | tee -a $log_File
 
         exit 1
     fi
 
-    log_debug_information "Début de compression" | tee $log_File
+    log_debug_information "Début de compression" | tee -a $log_File
 
-    log_debug_information "Compression et chiffrement du dossier..." | tee $log_File
+    log_debug_information "Compression et chiffrement du dossier..." | tee -a $log_File
     # sudo apt update && sudo apt install -y p7zip-full
     # -9 : Cmpression maximale 
     zip -r -e -P "$secret" -9 "$output_File" "$source_Dir"
 
-    log_debug_information "Début de chiffrement" | tee $log_File
+    log_debug_information "Début de chiffrement" | tee -a $log_File
 }
 
 
