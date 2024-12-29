@@ -11,6 +11,7 @@ echo "#######################"
 echo "script_dir : $script_dir"
 echo "Afficher les variables"
 echo "secret : $secret"
+# $USER : Utilisateur qui lancé le script, Variable système
 echo "USER : $USER"
 echo "recipients : $recipients"
 echo "mailsubject : $mailsubject"
