@@ -42,7 +42,7 @@ function check_user_or_cron(){
     # . : Introduit une précision, spécifiant combien de caractères de la chaîne d'entrée doivent être affichés.
     # 0 : Spécifie que zéro caractère de l'argument fourni doit être affiché.
     # s : Indique que le format s'applique à une chaîne de caractères (string).
-    echo $(printf '#%.0s' {1..60}) | tee -a -a $log_File
+    echo $(printf '#%.0s' {1..60}) | tee -a $log_File
     
     # Vérifier si le script est exécuté par cron
     # L'option -n dans une condition if teste si la chaîne spécifiée est non vide. Autrement dit, cela vérifie si la variable $CRON_TZ contient une valeur.
