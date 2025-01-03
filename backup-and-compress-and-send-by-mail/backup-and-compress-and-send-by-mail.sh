@@ -43,7 +43,7 @@ function check_user_or_cron(){
     # 0 : Spécifie que zéro caractère de l'argument fourni doit être affiché.
     # s : Indique que le format s'applique à une chaîne de caractères (string).
     echo $(printf '#%.0s' {1..60}) | tee -a $log_File
-    
+
     # Vérifier si le script est exécuté par cron
     # L'option -n dans une condition if teste si la chaîne spécifiée est non vide. Autrement dit, cela vérifie si la variable $CRON_TZ contient une valeur.
     if [ -z "$PS1" ] && [ -z "$SSH_CONNECTION" ] && [ -z "$TMUX" ] && [ -z "$USER" ]; then
@@ -72,6 +72,7 @@ function sendmail(){
     # Vérification du nombre d'arguments
     if [[ $# -ne 6 ]]; then
        log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'archive' " | tee -a $log_File
+        # Arrêter cette Fonction
         return 1
     fi
 
@@ -114,6 +115,7 @@ function archive(){
     if [[ $# -ne 4 ]]; then
         log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'archive' " | tee -a $log_File
 
+        # Arrêter cette Fonction
         return 1
     fi
 
@@ -148,6 +150,44 @@ function archive(){
 }
 
 
+#################################################
+# link /etc/rclone/.config/rclone.config /root/.config/rclone/rclone.conf
+# link /etc/rclone/.config/rclone.config /home/sda/.config/rclone/rclone.conf
+# rclone tree googledrive-saz31:zmar
+# rclone sync $output_File $google_Drive_Repository
+# rclone tree $google_Drive_Repository
+function syncgoogledrive(){
+    # Vérification du nombre d'arguments
+    if [[ $# -ne 5 ]]; then
+       log_debug_error "Vérifier les le nombre d'arguments envoyés à la fonction 'syncgoogledrive' " | tee -a $log_File
+        # Arrêter cette Fonction
+        return 1
+    fi
+
+    google_Drive="$1"
+    google_Drive_Folder="$2"
+    backup_Dir="$3"
+    output_File="$4"
+    log_File="$5"
+    log_debug_information ": syncgoogledrive de la fonction Afficher les variables dans la fonction 'syncgoogledrive'." | tee -a $log_File
+    log_debug_information ": google_Drive_Repository dans la fonction 'syncgoogledrive' : $google_Drive_Repository" | tee -a $log_File
+    log_debug_information ": backup_Dir dans la fonction 'syncgoogledrive' : $backup_Dir" | tee -a $log_File
+
+    if rclone lsd "$google_Drive:" | grep -q "$google_Drive_Folder"; then
+        log_debug_information "[ succès : echo $? ] Le dossier cible '$google_Drive_Folder' existe dans Google Drive '$google_Drive_Folder'." | tee -a $log_File
+        rclone sync "$backup_Dir" "$google_Drive:/$google_Drive_Folder"
+        log_debug_information "Fichier de sauvegarde '$output_File' a été envoyé vers GoogleDrive '$google_Drive'" | tee -a "$log_File"
+        log_debug_information "FIN DE SYNCHRONISATION VERS GOOGLE DRIVE ($google_Drive)" | tee -a "$log_File"
+
+    else
+        log_debug_error "[ échec : echo $? ] Le dossier cible $google_Drive_Repository n'existe pas dans Google Drive '$google_Drive_Folder'." | tee -a $log_File
+    fi
+        # Arrêter cette Fonction
+        return 1
+
+}
+
+
 function retention() {
     backup_Dir="$1"
     # Nombre de jours à garder les dossiers (seront effacés après X jours)
@@ -163,3 +203,4 @@ create_log_dir
 archive  "$secret" "$source_Dir" "$output_File" "$log_File"
 sendmail  "$recipients" "$mailbody" "$mailsubject" "$senderMail" "$output_File" "$log_File"
 retention "$backup_Dir" "$RETENTION" "$log_File"
+syncgoogledrive "$google_Drive" "$google_Drive_Folder" "$backup_Dir" "$output_File" "$log_File"
